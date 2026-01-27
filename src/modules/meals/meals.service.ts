@@ -6,7 +6,8 @@ const createMeal = async (data: any) => {
         data: {
             ...data
         }
-    })
+    });
+    return result;
 }
 
 export const mealsServices = {

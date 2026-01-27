@@ -43,13 +43,13 @@ CREATE TABLE "Categories" (
 -- CreateTable
 CREATE TABLE "Meals" (
     "id" TEXT NOT NULL,
-    "mealId" TEXT NOT NULL,
-    "cateId" TEXT NOT NULL,
+    "providerId" TEXT,
+    "categoryId" TEXT,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
     "thumbnail" TEXT NOT NULL,
-    "isAvailable" BOOLEAN NOT NULL,
+    "isAvailable" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -110,10 +110,10 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 ALTER TABLE "ProviderProfiles" ADD CONSTRAINT "ProviderProfiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Meals" ADD CONSTRAINT "Meals_mealId_fkey" FOREIGN KEY ("mealId") REFERENCES "ProviderProfiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Meals" ADD CONSTRAINT "Meals_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "ProviderProfiles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Meals" ADD CONSTRAINT "Meals_cateId_fkey" FOREIGN KEY ("cateId") REFERENCES "Categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Meals" ADD CONSTRAINT "Meals_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Orders" ADD CONSTRAINT "Orders_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

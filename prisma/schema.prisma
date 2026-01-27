@@ -45,20 +45,25 @@ model Categories {
 }
 
 model Meals {
-  id          String           @id @default(uuid())
-  mealId      String
-  providerId  ProviderProfiles @relation(fields: [mealId], references: [id])
-  cateId      String
-  categoryId  Categories       @relation(fields: [cateId], references: [id])
+  id String @id @default(uuid())
+
+  providerId String?
+  provider   ProviderProfiles? @relation(fields: [providerId], references: [id])
+
+  categoryId String?
+  category   Categories? @relation(fields: [categoryId], references: [id])
+
   name        String
   description String
-  price       Decimal          @db.Decimal(10, 2)
+  price       Decimal @db.Decimal(10, 2)
   thumbnail   String
-  isAvailable Boolean
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  orderItems  OrderItems[]
-  reviews     Reviews[]
+  isAvailable Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderItems OrderItems[]
+  reviews    Reviews[]
 }
 
 model Orders {

@@ -3,7 +3,7 @@ import { mealsServices } from "./meals.service";
 
 const createMeal = async (req: Request, res: Response) => {
     try {
-        const mealData = req.body();
+        const mealData = req.body;
         const result = await mealsServices.createMeal(mealData);
         res.status(201).json(result)
     }
