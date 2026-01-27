@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String             @id
+  email            String             @unique
+  name             String?
+  providerProfiles ProviderProfiles[]
+  orders           Orders[]
+  reviews          Reviews[]
+}
+
+model ProviderProfiles {
+  id             String   @id @default(uuid())
+  userId         String
+  provider       User     @relation(fields: [userId], references: [id])
+  restaurentName String
+  description    String
+  address        String
+  isOpen         Boolean
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  meals          Meals[]
+  orders         Orders[]
+}
+
+model Categories {
+  id        String   @id @default(uuid())
+  cuisine   String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  meals     Meals[]
+}
+
+model Meals {
+  id          String           @id @default(uuid())
+  mealId      String
+  providerId  ProviderProfiles @relation(fields: [mealId], references: [id])
+  cateId      String
+  categoryId  Categories       @relation(fields: [cateId], references: [id])
+  name        String
+  description String
+  price       Decimal          @db.Decimal(10, 2)
+  thumbnail   String
+  isAvailable Boolean
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  orderItems  OrderItems[]
+  reviews     Reviews[]
+}
+
+model Orders {
+  id              String           @id @default(uuid())
+  userId          String
+  customerId      User             @relation(fields: [userId], references: [id])
+  restaurentId    String
+  providerId      ProviderProfiles @relation(fields: [restaurentId], references: [id])
+  status          OrderStatus
+  deliveryAddress String
+  paymentMethod   PaymentMethod
+  totalAmount     Decimal          @db.Decimal(10, 2)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  orderItems      OrderItems[]
+}
+
+model OrderItems {
+  id       String  @id @default(uuid())
+  order_ID String
+  orderId  Orders  @relation(fields: [order_ID], references: [id])
+  meal_id  String
+  mealId   Meals   @relation(fields: [meal_id], references: [id])
+  quantity Int
+  price    Decimal @db.Decimal(10, 2)
+}
+
+model Reviews {
+  id          String   @id @default(uuid())
+  customer_id String
+  customerId  User     @relation(fields: [customer_id], references: [id])
+  meal_id     String
+  mealId      Meals    @relation(fields: [meal_id], references: [id])
+  rating      Int      @db.SmallInt
+  comment     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DietaryPreference {
+  id          String             @id @default(uuid())
+  dietaryType DietaryPreferences @default(HALAL)
+}
+
+enum DietaryPreferences {
+  VEGETARIAN
+  VEGAN
+  NON_VEGETARIAN
+  HALAL
+  GLUTEN_FREE
+  LOW_CALORIE
+}
+
+enum OrderStatus {
+  PLACED
+  PREPARING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  Cash
+}
