@@ -119,6 +119,8 @@ enum PaymentMethod {
   Cash
 }
 
+
+
 model User {
   id               String             @id
   name             String
@@ -129,6 +131,7 @@ model User {
   updatedAt        DateTime           @updatedAt
   sessions         Session[]
   accounts         Account[]
+  role             String   @default("USER")
   providerProfiles ProviderProfiles[]
   orders           Orders[]
   reviews          Reviews[]
