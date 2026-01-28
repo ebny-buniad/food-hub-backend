@@ -6,6 +6,7 @@ import { UserRole } from "../../enum";
 const router = express.Router();
 
 router.post("/", auth(UserRole.PROVIDER), providerController.createProviderProfile)
+router.patch("/:id", auth(UserRole.PROVIDER), providerController.updateProfile)
 
 
 export const providerRouter: Router = router;
