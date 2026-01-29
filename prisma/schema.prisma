@@ -17,6 +17,7 @@ model ProviderProfiles {
   id             String   @id @default(uuid())
   userId         String
   provider       User     @relation(fields: [userId], references: [id])
+  image          String?
   restaurentName String
   description    String
   address        String

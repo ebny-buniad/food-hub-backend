@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import { mealsRouter } from "./modules/meals/meals.router";
 import { providerRouter } from "./modules/provider/provider.router";
+import { categoriesRouter } from "./modules/categories/categories.router";
 
 
 const app: Application = express();
@@ -23,6 +24,9 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use("/api/provider/meals", mealsRouter);
 
 app.use("/api/provider/profile", providerRouter)
+
+// * Admin Routes
+app.use("/api/admin/categories", categoriesRouter);
 
 
 export default app;
