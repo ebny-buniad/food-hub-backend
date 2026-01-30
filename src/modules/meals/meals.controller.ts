@@ -61,9 +61,7 @@ const updateMeal = async (req: Request, res: Response) => {
         if (!id || typeof id !== "string") {
             throw new Error("Invalid category id");
         }
-        console.log(id)
         const updateData = req.body;
-        console.log(updateData)
         const result = await mealsServices.updateMeal(updateData, id);
         res.status(201).json(result);
     }
@@ -75,10 +73,29 @@ const updateMeal = async (req: Request, res: Response) => {
     }
 }
 
+// * Delete meal
+const deleteMeal = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== "string") {
+            throw new Error("Invalid category id");
+        }
+        const result = await mealsServices.deleteMeal(id);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Meals delete failed",
+            details: error
+        })
+    }
+}
+
 
 export const mealsController = {
     createMeal,
     getAllMeals,
     getMeal,
-    updateMeal
+    updateMeal,
+    deleteMeal
 }

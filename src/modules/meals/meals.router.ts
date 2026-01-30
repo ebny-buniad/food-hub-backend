@@ -9,5 +9,7 @@ router.post("/provider/meals", auth(UserRole.PROVIDER), mealsController.createMe
 router.get("/meals", mealsController.getAllMeals);
 router.get("/meals/:id", mealsController.getMeal);
 router.put("/provider/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal);
+router.delete("/provider/meals/:id", auth(UserRole.PROVIDER), mealsController.deleteMeal);
+
 
 export const mealsRouter: Router = router;
