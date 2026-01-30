@@ -15,7 +15,7 @@ datasource db {
 
 model ProviderProfiles {
   id             String   @id @default(uuid())
-  userId         String
+  userId         String   @unique
   provider       User     @relation(fields: [userId], references: [id])
   image          String?
   restaurentName String
