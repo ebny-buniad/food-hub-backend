@@ -10,6 +10,19 @@ const createCategories = async (data: Categories) => {
     return result;
 }
 
+// * Update categories
+const updateCategories = async (data: Categories, id:any) => {
+    const result = await prisma.categories.update({
+        where:{
+            id: id
+        },
+        data:{
+            ...data
+        }
+    })
+}
+
 export const categoriesSevices = {
-    createCategories
+    createCategories,
+    updateCategories
 }
