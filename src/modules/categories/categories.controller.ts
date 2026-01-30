@@ -7,11 +7,12 @@ const createCategories = async (req: Request, res: Response) => {
         const result = await categoriesSevices.createCategories(data);
         res.status(200).json(result);
     }
-    catch (error) {
-        res.status(400).json({
-            error: "Meal creation failed",
-            details: error
-        })
+    catch (error: any) {
+        if (error.code === "P2002") {
+            res.status(400).json({
+                error: "Category list already exists"
+            })
+        }
     }
 }
 
@@ -24,7 +25,7 @@ const updateCategories = async (req: Request, res: Response) => {
     }
     catch (error) {
         res.status(400).json({
-            error: "Meal creation failed",
+            error: "Category update failed",
             details: error
         })
     }

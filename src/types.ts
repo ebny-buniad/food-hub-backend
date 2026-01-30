@@ -8,6 +8,6 @@ export interface ProviderProfile {
 
 // * Categories type
 export interface Categories {
-    cuisine: string[]
+    cuisine: string
 }
 

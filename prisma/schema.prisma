@@ -30,7 +30,7 @@ model ProviderProfiles {
 
 model Categories {
   id        String   @id @default(uuid())
-  cuisine   String[]
+  cuisine   String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   meals     Meals[]
