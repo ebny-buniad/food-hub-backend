@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { mealsServices } from "./meals.service";
 
+// * Create meal
 const createMeal = async (req: Request, res: Response) => {
     try {
         const userId = req.user?.id;
@@ -21,6 +22,21 @@ const createMeal = async (req: Request, res: Response) => {
     }
 }
 
+// Get all meals
+const getAllMeals = async (req: Request, res: Response) => {
+    try {
+        const result = await mealsServices.getAllMeals();   
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Meals get failed",
+            details: error
+        })
+    }
+}
+
 export const mealsController = {
-    createMeal
+    createMeal,
+    getAllMeals
 }

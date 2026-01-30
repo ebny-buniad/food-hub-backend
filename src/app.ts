@@ -23,7 +23,10 @@ app.get('/', (req, res) => {
 app.all('/api/auth/*splat', toNodeHandler(auth));
 
 // * Provider Management
-app.use("/api/provider/meals", mealsRouter);
+app.use("/api", mealsRouter);
+
+
+
 app.use("/api/provider/profile", providerRouter)
 
 // * Admin Routes

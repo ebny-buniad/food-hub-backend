@@ -5,6 +5,7 @@ import { UserRole } from '../../enum';
 
 const router = express.Router();
 
-router.post("/", auth(UserRole.PROVIDER), mealsController.createMeal)
+router.post("/provider/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
+router.get("/meals", mealsController.getAllMeals);
 
 export const mealsRouter: Router = router;

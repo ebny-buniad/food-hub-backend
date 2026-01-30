@@ -10,3 +10,13 @@ export interface ProviderProfile {
 export interface Categories {
     cuisine: string
 }
+
+// * Meal type
+export interface Meal {
+    name: string,
+    description: string,
+    price: number,
+    thumbnail: string,
+    isAvailable: boolean,
+    categoryId: string
+}
