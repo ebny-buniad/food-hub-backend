@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post("/provider/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
 router.get("/meals", mealsController.getAllMeals);
-router.put("/provider/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal)
+router.get("/meals/:id", mealsController.getMeal);
+router.put("/provider/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal);
 
 export const mealsRouter: Router = router;

@@ -28,8 +28,18 @@ const getAllMeals = async () => {
     return result;
 }
 
+// * Get single meal by Id
+const getMeal = async (id: string) => {
+    const result = await prisma.meals.findUnique({
+        where: {
+            id: id
+        }
+    });
+    return result;
+}
+
 // * Update Meals
-const updateMeal = async (data:any, id:string) => {
+const updateMeal = async (data: any, id: string) => {
     const result = await prisma.meals.update({
         where: {
             id: id
@@ -44,5 +54,6 @@ const updateMeal = async (data:any, id:string) => {
 export const mealsServices = {
     createMeal,
     getAllMeals,
-    updateMeal
+    updateMeal,
+    getMeal
 }
