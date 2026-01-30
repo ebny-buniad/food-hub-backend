@@ -25,7 +25,7 @@ const createMeal = async (req: Request, res: Response) => {
 // Get all meals
 const getAllMeals = async (req: Request, res: Response) => {
     try {
-        const result = await mealsServices.getAllMeals();   
+        const result = await mealsServices.getAllMeals();
         res.status(201).json(result);
     }
     catch (error) {
@@ -36,7 +36,30 @@ const getAllMeals = async (req: Request, res: Response) => {
     }
 }
 
+// * Update meals
+const updateMeal = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== "string") {
+            throw new Error("Invalid category id");
+        }
+        console.log(id)
+        const updateData = req.body;
+        console.log(updateData)
+        const result = await mealsServices.updateMeal(updateData, id);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Meals update failed",
+            details: error
+        })
+    }
+}
+
+
 export const mealsController = {
     createMeal,
-    getAllMeals
+    getAllMeals,
+    updateMeal
 }

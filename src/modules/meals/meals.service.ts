@@ -1,8 +1,8 @@
 import { prisma } from "../../lib/prisma"
 import { Meal } from "../../types";
 
+// * Create meal
 const createMeal = async (data: Meal, id: string) => {
-
     // * Get provider profile by user Id
     const providerProfile = await prisma.providerProfiles.findUnique({
         where: {
@@ -13,8 +13,6 @@ const createMeal = async (data: Meal, id: string) => {
     if (!providerId) {
         throw new Error("Provider profile not found");
     }
-
-    // * Create meal
     const result = await prisma.meals.create({
         data: {
             providerId,
@@ -24,12 +22,27 @@ const createMeal = async (data: Meal, id: string) => {
     return result;
 }
 
+// * Get all Meals 
 const getAllMeals = async () => {
     const result = await prisma.meals.findMany();
     return result;
 }
 
+// * Update Meals
+const updateMeal = async (data:any, id:string) => {
+    const result = await prisma.meals.update({
+        where: {
+            id: id
+        },
+        data: {
+            ...data
+        }
+    });
+    return result;
+}
+
 export const mealsServices = {
     createMeal,
-    getAllMeals
+    getAllMeals,
+    updateMeal
 }

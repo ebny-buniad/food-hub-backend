@@ -19,6 +19,9 @@ const createCategories = async (req: Request, res: Response) => {
 const updateCategories = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        if(!id || typeof id != "string"){
+            throw new Error("Invalid category id");
+        }
         const data = req.body;
         const result = await categoriesSevices.updateCategories(data, id);
         res.status(200).json(result)
