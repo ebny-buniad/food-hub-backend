@@ -44,11 +44,51 @@ const createOrder = async (data: any, userId: string) => {
         where: { id: order.id },
         data: { totalAmount }
     })
-
-
     return updateOrderAmount;
 }
 
+// * Get user orders
+const getOrders = async (userId: string) => {
+    const orders = await prisma.orders.findMany({
+        where: {
+            userId
+        },
+        orderBy: {
+            createdAt: "desc"
+        },
+        select: {
+            id: true,
+            status: true,
+            deliveryAddress: true,
+            paymentMethod: true,
+            totalAmount: true,
+            createdAt: true,
+            provider: {
+                select: {
+                    id: true,
+                    restaurentName: true
+                }
+            },
+            orderItems: {
+                select: {
+                    quantity: true,
+                    price: true,
+                    meals: {
+                        select: {
+                            id: true,
+                            name: true,
+                            thumbnail: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    return orders
+}
+
 export const ordersServices = {
-    createOrder
+    createOrder,
+    getOrders
 }

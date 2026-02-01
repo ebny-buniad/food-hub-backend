@@ -79,7 +79,7 @@ model OrderItems {
   orderID    String
   order      Orders     @relation(fields: [orderID], references: [id])
   mealId     String
-  meal       Meals      @relation(fields: [mealId], references: [id])
+  meals       Meals      @relation(fields: [mealId], references: [id])
   categoryId String
   category   Categories @relation(fields: [categoryId], references: [id])
   quantity   Int

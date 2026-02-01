@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { ordersServices } from "./orders.service";
 
+// * Create order
 const createOrder = async (req: Request, res: Response) => {
     try {
         const userId = req.user?.id;
@@ -22,6 +23,27 @@ const createOrder = async (req: Request, res: Response) => {
     }
 }
 
+// * Get orders
+const getOrders = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+        const result = await ordersServices.getOrders(userId);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Order create failed",
+            details: error
+        })
+    }
+}
+
 export const ordersController = {
-    createOrder
+    createOrder,
+    getOrders
 }
