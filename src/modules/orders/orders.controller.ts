@@ -33,11 +33,32 @@ const getOrders = async (req: Request, res: Response) => {
             return;
         }
         const result = await ordersServices.getOrders(userId);
-        res.status(201).json(result);
+        res.status(200).json(result);
     }
     catch (error) {
         res.status(400).json({
-            error: "Order create failed",
+            error: "Orders get failed",
+            details: error
+        })
+    }
+}
+
+// * Get Order by Id
+
+const getOrderById = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "Invallied Order id"
+            }
+        }
+        const result = await ordersServices.getOrderById(id);
+         res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Order get failed",
             details: error
         })
     }
@@ -45,5 +66,6 @@ const getOrders = async (req: Request, res: Response) => {
 
 export const ordersController = {
     createOrder,
-    getOrders
+    getOrders,
+    getOrderById
 }

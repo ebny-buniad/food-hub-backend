@@ -85,10 +85,51 @@ const getOrders = async (userId: string) => {
         }
     });
 
-    return orders
+    return orders;
 }
+
+// * Get Order by Id
+const getOrderById = async (id: string) => {
+    const order = await prisma.orders.findUnique({
+        where: {
+            id: id
+        },
+        select: {
+            id: true,
+            status: true,
+            deliveryAddress: true,
+            paymentMethod: true,
+            totalAmount: true,
+            createdAt: true,
+            provider: {
+                select: {
+                    id: true,
+                    restaurentName: true
+                }
+            },
+            orderItems: {
+                select: {
+                    quantity: true,
+                    price: true,
+                    meals: {
+                        select: {
+                            id: true,
+                            name: true,
+                            thumbnail: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return order;
+}
+
+
+
 
 export const ordersServices = {
     createOrder,
-    getOrders
+    getOrders,
+    getOrderById
 }
