@@ -37,12 +37,37 @@ const getProviders = async (req: Request, res: Response) => {
     }
 }
 
+// Get provider
+const getProvider = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "Id requred!"
+            }
+        }
+        const result = await providerSevices.getProvider(id)
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Provider get failed",
+            details: error
+        })
+    }
+}
+
 
 
 // * Update Provider Profile
 const updateProfile = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "Id requred!"
+            }
+        }
         const updateData = req.body;
         const result = await providerSevices.updateProfile(updateData, id);
         res.status(201).json(result)
@@ -61,5 +86,6 @@ const updateProfile = async (req: Request, res: Response) => {
 export const providerController = {
     createProviderProfile,
     updateProfile,
-    getProviders
+    getProviders,
+    getProvider
 }

@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post("/provider/profile", auth(UserRole.PROVIDER), providerController.createProviderProfile);
 router.get("/providers", providerController.getProviders)
+router.get("/providers/:id", providerController.getProvider)
 router.patch("/provider/profile/:id", auth(UserRole.PROVIDER), providerController.updateProfile)
 
 

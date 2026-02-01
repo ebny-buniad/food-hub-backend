@@ -22,9 +22,37 @@ const getProviders = async () => {
     return providers;
 }
 
+// Get signle provider with menu
+
+const getProvider = async (P_Id: string) => {
+    const provider = await prisma.providerProfiles.findUnique({
+        where: {
+            id: P_Id
+        },
+        select: {
+            id: true,
+            image: true,
+            restaurentName: true,
+            description: true,
+            address: true,
+            isOpen: true,
+            meals: {
+                select: {
+                    name: true,
+                    description:true,
+                    thumbnail: true,
+                    price: true,
+                    isAvailable: true,
+                }
+            }
+        }
+    })
+
+    return provider;
+}
 
 // * Update Provider Profile
-const updateProfile = async (data: ProviderProfile, id: any) => {
+const updateProfile = async (data: ProviderProfile, id: string) => {
     const updateData = await prisma.providerProfiles.update({
         where: {
             id: id
@@ -41,5 +69,6 @@ const updateProfile = async (data: ProviderProfile, id: any) => {
 export const providerSevices = {
     createProviderProfile,
     updateProfile,
+    getProvider,
     getProviders
 }
