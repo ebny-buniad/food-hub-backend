@@ -12,8 +12,8 @@ const createProviderProfile = async (req: Request, res: Response) => {
             });
         }
         const providerInfo = req.body;
-        const result = await providerSevices.createProviderProfile(providerInfo, userId)
-        res.status(201).json(result)
+        const result = await providerSevices.createProviderProfile(providerInfo, userId);
+        res.status(201).json(result);
     }
     catch (error) {
         res.status(400).json({
@@ -22,6 +22,22 @@ const createProviderProfile = async (req: Request, res: Response) => {
         })
     }
 }
+
+// * Get all providers
+const getProviders = async (req: Request, res: Response) => {
+    try {
+        const result = await providerSevices.getProviders();
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Providers get failed",
+            details: error
+        })
+    }
+}
+
+
 
 // * Update Provider Profile
 const updateProfile = async (req: Request, res: Response) => {
@@ -44,5 +60,6 @@ const updateProfile = async (req: Request, res: Response) => {
 
 export const providerController = {
     createProviderProfile,
-    updateProfile
+    updateProfile,
+    getProviders
 }

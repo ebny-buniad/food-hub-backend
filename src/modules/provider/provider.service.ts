@@ -12,6 +12,16 @@ const createProviderProfile = async (data: ProviderProfile, userId: string) => {
     return result;
 }
 
+// * Get all providers
+const getProviders = async () => {
+    const providers = await prisma.providerProfiles.findMany({
+        orderBy: {
+            createdAt: "desc"
+        }
+    })
+    return providers;
+}
+
 
 // * Update Provider Profile
 const updateProfile = async (data: ProviderProfile, id: any) => {
@@ -30,5 +40,6 @@ const updateProfile = async (data: ProviderProfile, id: any) => {
 
 export const providerSevices = {
     createProviderProfile,
-    updateProfile
+    updateProfile,
+    getProviders
 }

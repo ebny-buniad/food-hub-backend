@@ -25,7 +25,7 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
 
 // * Provider Routes
 app.use("/api", mealsRouter);
-app.use("/api/provider/profile", providerRouter);
+app.use("/api", providerRouter);
 
 // User Routes
 app.use("/api", ordersRouter);
