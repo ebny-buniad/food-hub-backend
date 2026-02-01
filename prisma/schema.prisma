@@ -29,11 +29,12 @@ model ProviderProfiles {
 }
 
 model Categories {
-  id        String   @id @default(uuid())
-  cuisine   String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  meals     Meals[]
+  id         String       @id @default(uuid())
+  cuisine    String       @unique
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  meals      Meals[]
+  orderItems OrderItems[]
 }
 
 model Meals {
@@ -61,12 +62,12 @@ model Meals {
 model Orders {
   id              String           @id @default(uuid())
   userId          String
-  customerId      User             @relation(fields: [userId], references: [id])
-  restaurentId    String
-  providerId      ProviderProfiles @relation(fields: [restaurentId], references: [id])
-  status          OrderStatus
+  user            User             @relation(fields: [userId], references: [id])
+  providerId      String
+  provider        ProviderProfiles @relation(fields: [providerId], references: [id])
+  status          OrderStatus?     @default(PLACED)
   deliveryAddress String
-  paymentMethod   PaymentMethod
+  paymentMethod   PaymentMethod?   @default(Cash)
   totalAmount     Decimal          @db.Decimal(10, 2)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -74,13 +75,15 @@ model Orders {
 }
 
 model OrderItems {
-  id       String  @id @default(uuid())
-  order_ID String
-  orderId  Orders  @relation(fields: [order_ID], references: [id])
-  meal_id  String
-  mealId   Meals   @relation(fields: [meal_id], references: [id])
-  quantity Int
-  price    Decimal @db.Decimal(10, 2)
+  id         String     @id @default(uuid())
+  orderID    String
+  order      Orders     @relation(fields: [orderID], references: [id])
+  mealId     String
+  meal       Meals      @relation(fields: [mealId], references: [id])
+  categoryId String
+  category   Categories @relation(fields: [categoryId], references: [id])
+  quantity   Int
+  price      Decimal    @db.Decimal(10, 2)
 }
 
 model Reviews {

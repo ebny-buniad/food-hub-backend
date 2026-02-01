@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express"
 import { auth as betterAuth } from "../lib/auth"
 import { UserRole } from "../enum"
 
-
 declare global {
     namespace Express {
         interface Request {

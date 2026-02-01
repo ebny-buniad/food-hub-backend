@@ -26,7 +26,7 @@ const createMeal = async (req: Request, res: Response) => {
 const getAllMeals = async (req: Request, res: Response) => {
     try {
         const result = await mealsServices.getAllMeals();
-        res.status(201).json(result);
+        res.status(200).json(result);
     }
     catch (error) {
         res.status(400).json({
