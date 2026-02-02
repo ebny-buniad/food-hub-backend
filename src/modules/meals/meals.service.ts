@@ -24,7 +24,27 @@ const createMeal = async (data: Meal, id: string) => {
 
 // * Get all Meals 
 const getAllMeals = async () => {
-    const result = await prisma.meals.findMany();
+    const result = await prisma.meals.findMany({
+        orderBy: {
+            createdAt: "desc"
+        },
+        select: {
+            id: true,
+            providerId: true,
+            dietary: true,
+            category: {
+                select: {
+                    cuisine: true
+                }
+            },
+            name: true,
+            description: true,
+            price: true,
+            thumbnail: true,
+            isAvailable: true,
+            createdAt: true
+        }
+    });
     return result;
 }
 
@@ -33,6 +53,22 @@ const getMeal = async (id: string) => {
     const result = await prisma.meals.findUnique({
         where: {
             id: id
+        },
+        select: {
+            id: true,
+            providerId: true,
+            dietary: true,
+            category: {
+                select: {
+                    cuisine: true
+                }
+            },
+            name: true,
+            description: true,
+            price: true,
+            thumbnail: true,
+            isAvailable: true,
+            createdAt: true
         }
     });
     return result;

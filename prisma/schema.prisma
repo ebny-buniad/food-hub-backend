@@ -44,7 +44,8 @@ model Meals {
   provider   ProviderProfiles? @relation(fields: [providerId], references: [id])
 
   categoryId String?
-  category   Categories? @relation(fields: [categoryId], references: [id])
+  category   Categories?         @relation(fields: [categoryId], references: [id])
+  dietary    DietaryPreferences? @default(HALAL)
 
   name        String
   description String
@@ -96,11 +97,6 @@ model Reviews {
   comment     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-model DietaryPreference {
-  id          String             @id @default(uuid())
-  dietaryType DietaryPreferences @default(HALAL)
 }
 
 enum DietaryPreferences {
