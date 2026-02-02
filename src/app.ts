@@ -8,12 +8,13 @@ import { providerRouter } from "./modules/provider/provider.router";
 import { categoriesRouter } from "./modules/categories/categories.router";
 import { ordersRouter } from "./modules/orders/orders.router";
 import { adminRoter } from "./modules/admin/admin.router";
+import { authRouter } from "./modules/auth/auth.router";
 
 
 const app: Application = express();
 app.use(express.json());
 app.use(cors({
-    origin: process.env.APP_URL || "http://localhost:4000", // client side url
+    origin: process.env.APP_URL, // client side url
     credentials: true
 }))
 
@@ -23,6 +24,9 @@ app.get('/', (req, res) => {
 })
 
 app.all('/api/auth/*splat', toNodeHandler(auth));
+
+// Get me
+app.use("/api", authRouter)
 
 // * Provider Routes
 app.use("/api", mealsRouter);
