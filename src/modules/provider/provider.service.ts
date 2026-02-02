@@ -23,7 +23,6 @@ const getProviders = async () => {
 }
 
 // Get signle provider with menu
-
 const getProvider = async (P_Id: string) => {
     const provider = await prisma.providerProfiles.findUnique({
         where: {
@@ -39,7 +38,7 @@ const getProvider = async (P_Id: string) => {
             meals: {
                 select: {
                     name: true,
-                    description:true,
+                    description: true,
                     thumbnail: true,
                     price: true,
                     isAvailable: true,
@@ -50,6 +49,73 @@ const getProvider = async (P_Id: string) => {
 
     return provider;
 }
+
+
+// * Get provider orders
+const getProviderOrders = async (id: string) => {
+    // * Get provider profile by user Id
+    const providerProfile = await prisma.providerProfiles.findUnique({
+        where: {
+            userId: id
+        }
+    });
+    const providerId = providerProfile?.id;
+    if (!providerId) {
+        throw new Error("Provider profile not found");
+    }
+
+    const providerOrders = await prisma.orders.findMany({
+        where: {
+            providerId: providerId
+        },
+        select: {
+            id: true,
+            deliveryAddress: true,
+            user: {
+                select: {
+                    name: true,
+                    email: true,
+                }
+            },
+            orderItems: {
+                select: {
+
+                    category: {
+                        select: {
+                            cuisine: true
+                        }
+                    },
+                    meals: {
+                        select: {
+                            name: true,
+                            price: true
+                        }
+                    },
+                    quantity: true,
+                }
+            },
+            paymentMethod: true,
+            totalAmount: true,
+            createdAt: true,
+            status: true
+        }
+    });
+    return providerOrders;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // * Update Provider Profile
 const updateProfile = async (data: ProviderProfile, id: string) => {
@@ -70,5 +136,6 @@ export const providerSevices = {
     createProviderProfile,
     updateProfile,
     getProvider,
-    getProviders
+    getProviders,
+    getProviderOrders
 }

@@ -58,6 +58,43 @@ const getProvider = async (req: Request, res: Response) => {
 }
 
 
+// * Get provider orders
+
+const getProviderOrders = async (req: Request, res: Response) => {
+    try {
+        const id = req.user?.id;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "User id is invallied"
+            }
+        }
+        const result = await providerSevices.getProviderOrders(id);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Provider orders get failed",
+            details: error
+        })
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // * Update Provider Profile
 const updateProfile = async (req: Request, res: Response) => {
@@ -87,5 +124,6 @@ export const providerController = {
     createProviderProfile,
     updateProfile,
     getProviders,
-    getProvider
+    getProvider,
+    getProviderOrders
 }
