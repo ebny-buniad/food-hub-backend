@@ -103,8 +103,31 @@ const getProviderOrders = async (id: string) => {
     return providerOrders;
 }
 
+// * Get provider order by Id
+
+const getProviderOrderById = async (id: string) => {
+    const providerOrder = await prisma.orders.findUnique({
+        where: {
+            id: id
+        }
+    });
+    return providerOrder;
+}
 
 
+// * Update order status
+
+const updateOrderStatus = async (data: any, id: string) => {
+    const orderStatus = await prisma.orders.update({
+        where: {
+            id: id
+        },
+        data: {
+            ...data
+        }
+    })
+    return orderStatus;
+}
 
 
 
@@ -137,5 +160,7 @@ export const providerSevices = {
     updateProfile,
     getProvider,
     getProviders,
-    getProviderOrders
+    getProviderOrders,
+    getProviderOrderById,
+    updateOrderStatus
 }

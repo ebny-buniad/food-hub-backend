@@ -80,9 +80,49 @@ const getProviderOrders = async (req: Request, res: Response) => {
 }
 
 
+// * Get provider order by Id
+
+const getProviderOrderById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "Order id invallied"
+            }
+        }
+        const result = await providerSevices.getProviderOrderById(id);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Provider order get failed",
+            details: error
+        })
+    }
+}
 
 
+// * Update order status
 
+const updateOrderStatus = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "Id requred!"
+            }
+        }
+        const data = req.body;
+        const result = await providerSevices.updateOrderStatus(data, id);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Order status update failed",
+            details: error
+        })
+    }
+}
 
 
 
@@ -125,5 +165,7 @@ export const providerController = {
     updateProfile,
     getProviders,
     getProvider,
-    getProviderOrders
+    getProviderOrders,
+    getProviderOrderById,
+    updateOrderStatus
 }
