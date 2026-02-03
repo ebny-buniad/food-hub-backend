@@ -25,7 +25,13 @@ const createMeal = async (req: Request, res: Response) => {
 // * Get all meals
 const getAllMeals = async (req: Request, res: Response) => {
     try {
-        const result = await mealsServices.getAllMeals();
+        const { dietary, cuisine, minPrice, maxPrice } = req.query;
+        const result = await mealsServices.getAllMeals({
+            dietary,
+            cuisine,
+            minPrice,
+            maxPrice
+        });
         res.status(200).json(result);
     }
     catch (error) {

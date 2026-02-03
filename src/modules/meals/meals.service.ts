@@ -23,8 +23,29 @@ const createMeal = async (data: Meal, id: string) => {
 }
 
 // * Get all Meals 
-const getAllMeals = async () => {
+const getAllMeals = async (filters: any) => {
+    const where: any = {}
+    // dietary filter
+    if (filters.dietary) {
+        where.dietary = filters.dietary;
+    }
+
+    // price range filter
+    if (filters.minPrice || filters.maxPrice) {
+        where.price = {};
+        if (filters.minPrice) where.price.gte = Number(filters.minPrice);
+        if (filters.maxPrice) where.price.lte = Number(filters.maxPrice);
+    }
+
+    // cuisine filter (relation)
+    if (filters.cuisine) {
+        where.category = {
+            cuisine: filters.cuisine
+        };
+    }
+
     const result = await prisma.meals.findMany({
+        where,
         orderBy: {
             createdAt: "desc"
         },
