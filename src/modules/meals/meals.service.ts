@@ -63,6 +63,18 @@ const getAllMeals = async (filters: any) => {
             price: true,
             thumbnail: true,
             isAvailable: true,
+            reviews: {
+                select: {
+                    rating: true,
+                    customer: {
+                        select: {
+                            name: true
+                        }
+                    },
+                    comment: true,
+                    createdAt: true
+                }
+            },
             createdAt: true
         }
     });
@@ -89,6 +101,18 @@ const getMeal = async (id: string) => {
             price: true,
             thumbnail: true,
             isAvailable: true,
+            reviews: {
+                select: {
+                    rating: true,
+                    customer: {
+                        select: {
+                            name: true
+                        }
+                    },
+                    comment: true,
+                    createdAt: true
+                }
+            },
             createdAt: true
         }
     });
