@@ -9,6 +9,7 @@ import { categoriesRouter } from "./modules/categories/categories.router";
 import { ordersRouter } from "./modules/orders/orders.router";
 import { adminRoter } from "./modules/admin/admin.router";
 import { authRouter } from "./modules/auth/auth.router";
+import { reviewsRouter } from "./modules/reviews/reviews.router";
 
 
 const app: Application = express();
@@ -34,6 +35,7 @@ app.use("/api", providerRouter);
 
 // User Routes
 app.use("/api", ordersRouter);
+app.use("/api", reviewsRouter)
 
 // * Admin Routes
 app.use("/api/admin/categories", categoriesRouter);

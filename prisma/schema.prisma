@@ -88,15 +88,15 @@ model OrderItems {
 }
 
 model Reviews {
-  id          String   @id @default(uuid())
-  customer_id String
-  customerId  User     @relation(fields: [customer_id], references: [id])
-  meal_id     String
-  mealId      Meals    @relation(fields: [meal_id], references: [id])
-  rating      Int      @db.SmallInt
-  comment     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  customerId String
+  customer   User     @relation(fields: [customerId], references: [id])
+  mealId     String
+  meal       Meals    @relation(fields: [mealId], references: [id])
+  rating     Int      @db.SmallInt
+  comment    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 enum DietaryPreferences {
