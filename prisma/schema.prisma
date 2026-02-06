@@ -76,9 +76,11 @@ model CartItems {
   cart      Cart     @relation(fields: [cartId], references: [id])
   mealId    String
   meals     Meals    @relation(fields: [mealId], references: [id])
-  quatity   Int
+  quatity   Int @default(1)
   price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
+
+  @@unique([cartId, mealId])
 }
 
 model Orders {

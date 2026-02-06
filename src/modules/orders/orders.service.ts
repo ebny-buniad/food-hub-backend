@@ -2,6 +2,7 @@ import { prisma } from "../../lib/prisma"
 
 const createOrder = async (data: any, userId: string) => {
     const { providerId, deliveryAddress, items } = data;
+    
     const order = await prisma.orders.create({
         data: {
             userId,

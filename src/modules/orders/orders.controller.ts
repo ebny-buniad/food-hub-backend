@@ -11,7 +11,6 @@ const createOrder = async (req: Request, res: Response) => {
             }
         }
         const orderData = req.body;
-        console.log(orderData)
         const result = await ordersServices.createOrder(orderData, userId);
         res.status(201).json(result);
     }
