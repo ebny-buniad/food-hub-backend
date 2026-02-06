@@ -58,6 +58,27 @@ model Meals {
 
   orderItems OrderItems[]
   reviews    Reviews[]
+  cartItems  CartItems[]
+}
+
+model Cart {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  status    CartStatus  @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  cartItems CartItems[]
+}
+
+model CartItems {
+  id        String   @id @default(uuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  mealId    String
+  meals     Meals    @relation(fields: [mealId], references: [id])
+  quatity   Int
+  price     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
 }
 
 model Orders {
@@ -99,6 +120,12 @@ model Reviews {
   updatedAt  DateTime @updatedAt
 }
 
+enum CartStatus {
+  ACTIVE
+  ORDERED
+  ABANDONED
+}
+
 enum DietaryPreferences {
   VEGETARIAN
   VEGAN
@@ -135,6 +162,7 @@ model User {
 
   role   String? @default("USER")
   status String? @default("ACTIVE")
+  carts  Cart[]
 
   @@unique([email])
   @@map("User")

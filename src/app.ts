@@ -38,7 +38,7 @@ app.use("/api", ordersRouter);
 app.use("/api", reviewsRouter)
 
 // * Admin Routes
-app.use("/api/admin/categories", categoriesRouter);
+app.use("/api", categoriesRouter);
 app.use("/api", adminRoter)
 
 

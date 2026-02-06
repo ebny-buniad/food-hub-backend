@@ -16,10 +16,25 @@ const createCategories = async (req: Request, res: Response) => {
     }
 }
 
+// Get categories 
+
+const getCategories = async (req: Request, res: Response) => {
+    try {
+        const result = await categoriesSevices.getCategories();
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Category update failed",
+            details: error
+        })
+    }
+}
+
 const updateCategories = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        if(!id || typeof id != "string"){
+        if (!id || typeof id != "string") {
             throw new Error("Invalid category id");
         }
         const data = req.body;
@@ -37,5 +52,6 @@ const updateCategories = async (req: Request, res: Response) => {
 
 export const categoriesController = {
     createCategories,
+    getCategories,
     updateCategories
 }

@@ -10,13 +10,20 @@ const createCategories = async (data: Categories) => {
     return result;
 }
 
+// Get categories
+
+const getCategories = async () => {
+    const categories = await prisma.categories.findMany();
+    return categories;
+}
+
 // * Update categories
-const updateCategories = async (data: Categories, id:string) => {
+const updateCategories = async (data: Categories, id: string) => {
     const result = await prisma.categories.update({
-        where:{
+        where: {
             id: id
         },
-        data:{
+        data: {
             ...data
         }
     })
@@ -24,5 +31,6 @@ const updateCategories = async (data: Categories, id:string) => {
 
 export const categoriesSevices = {
     createCategories,
+    getCategories,
     updateCategories
 }
