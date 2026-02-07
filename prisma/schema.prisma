@@ -63,7 +63,7 @@ model Meals {
 
 model Cart {
   id        String      @id @default(uuid())
-  userId    String
+  userId    String      @unique
   user      User        @relation(fields: [userId], references: [id])
   status    CartStatus  @default(ACTIVE)
   createdAt DateTime    @default(now())
@@ -76,7 +76,7 @@ model CartItems {
   cart      Cart     @relation(fields: [cartId], references: [id])
   mealId    String
   meals     Meals    @relation(fields: [mealId], references: [id])
-  quatity   Int @default(1)
+  quatity   Int      @default(1)
   price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
 

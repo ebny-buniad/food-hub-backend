@@ -36,6 +36,61 @@ const createCart = async (data: any, id: string) => {
     return cart;
 }
 
+// * Get cart items
+
+const getCartItems = async (id: string) => {
+    const cartItems = await prisma.cart.findUnique({
+        where: {
+            userId: id
+        },
+        select: {
+            id: true,
+            userId: true,
+            status: true,
+            cartItems: {
+                select: {
+                    id: true,
+                    cartId: true,
+                    mealId: true,
+                    price: true,
+                    quatity: true
+                }
+            }
+        }
+    });
+
+    // find items from cart
+    const items = cartItems?.cartItems;
+    if (!items) {
+        return {
+            message: "Items add in cart"
+        }
+    }
+
+    // find meal by meal id
+    const cartInfo = [];
+    for (const item of items) {
+        const meal = await prisma.meals.findUnique({
+            where: {
+                id: item.mealId
+            }
+        })
+        const cartData = {
+            ...item,
+            thumbnail: meal?.thumbnail,
+            name: meal?.name
+        }
+
+        cartInfo.push(cartData)
+    }
+    return cartInfo;
+}
+
+
+
+
+
 export const cartService = {
-    createCart
+    createCart,
+    getCartItems
 }
