@@ -37,7 +37,6 @@ const createCart = async (data: any, id: string) => {
 }
 
 // * Get cart items
-
 const getCartItems = async (id: string) => {
     const cartItems = await prisma.cart.findUnique({
         where: {
@@ -80,17 +79,27 @@ const getCartItems = async (id: string) => {
             thumbnail: meal?.thumbnail,
             name: meal?.name
         }
-
         cartInfo.push(cartData)
     }
     return cartInfo;
 }
 
+// Delete cart items 
+
+const deleteCartItems = async (id: string) => {
+    const deleteItems = await prisma.cartItems.delete({
+        where: {
+            id: id
+        }
+    });
+    return deleteItems;
+}
 
 
 
 
 export const cartService = {
     createCart,
-    getCartItems
+    getCartItems,
+    deleteCartItems
 }

@@ -21,6 +21,9 @@ const createCart = async (req: Request, res: Response) => {
     }
 }
 
+
+// Get cart items
+
 const getCartItems = async (req: Request, res: Response) => {
     try {
         const id = req.user?.id;
@@ -40,7 +43,30 @@ const getCartItems = async (req: Request, res: Response) => {
     }
 }
 
+// Delete cart items
+
+const deleteCartItems = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        if (!id || typeof id !== "string") {
+            return {
+                message: "Id invallied"
+            }
+        }
+        const result = await cartService.deleteCartItems(id);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Cart delete failed",
+            details: error
+        })
+    }
+
+}
+
 export const cartController = {
     createCart,
-    getCartItems
+    getCartItems,
+    deleteCartItems
 }

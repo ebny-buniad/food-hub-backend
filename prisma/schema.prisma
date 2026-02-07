@@ -72,7 +72,7 @@ model Cart {
 
 model CartItems {
   id        String   @id @default(uuid())
-  cartId    String
+  cartId    String   @unique
   cart      Cart     @relation(fields: [cartId], references: [id])
   mealId    String
   meals     Meals    @relation(fields: [mealId], references: [id])
