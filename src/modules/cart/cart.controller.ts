@@ -11,7 +11,11 @@ const createCart = async (req: Request, res: Response) => {
         }
         const data = req.body;
         const result = await cartService.createCart(data, id);
-        res.status(201).json(result);
+        res.status(201).json({
+            success: true,
+            message: "Cart created",
+            data: result
+        });
     }
     catch (error) {
         res.status(400).json({

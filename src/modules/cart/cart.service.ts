@@ -1,44 +1,76 @@
 import { prisma } from "../../lib/prisma"
 
-// * Create cart 
-const createCart = async (data: any, id: string) => {
-    const cartItems = data.items;
-
-    // Create cart
-    const cart = await prisma.cart.create({
-        data: {
-            userId: id
-        }
+const createCart = async (data: any, userId: string) => {
+    //  Find ACTIVE cart
+    let cart = await prisma.cart.findFirst({
+        where: {
+            userId,
+            status: "ACTIVE",
+        },
     });
 
-    // create cartItem
-    for (const item of cartItems) {
-        // Get meal
-        const meal = await prisma.meals.findUnique({
-            where: {
-                id: item.mealId
-            }
-        })
-        const cartPrice = Number(meal?.price) * item.quantity;
-        const cartInfo = {
+    //  If not exist create
+    if (!cart) {
+        cart = await prisma.cart.create({
+            data: {
+                userId,
+                status: "ACTIVE",
+            },
+        });
+    }
+
+    //  Get meal
+    const meal = await prisma.meals.findUnique({
+        where: { id: data.mealId },
+    });
+
+    if (!meal) {
+        return {
+            message: "Meal not found",
+        };
+    }
+
+    // Check existing cart item
+    const existingItem = await prisma.cartItems.findFirst({
+        where: {
             cartId: cart.id,
-            price: cartPrice,
-            mealId: item?.mealId,
-            quatity: item?.quantity
-        }
-        // create 
+            mealId: data.mealId,
+        },
+    });
+
+    if (existingItem) {
+        // Update quantity
+        await prisma.cartItems.update({
+            where: { id: existingItem.id },
+            data: {
+                quantity: existingItem.quantity + data.quantity,
+                price:
+                    Number(meal.price) *
+                    (existingItem.quantity + data.quantity),
+            },
+        });
+    } else {
+        // Create new cart item
         await prisma.cartItems.create({
             data: {
-                ...cartInfo
-            }
-        })
+                cartId: cart.id,
+                mealId: data.mealId,
+                quantity: data.quantity,
+                price: Number(meal.price) * data.quantity,
+            },
+        });
     }
-    return cart;
-}
+    return {
+        message: "Item added to cart",
+        cartId: cart.id,
+    };
+};
+
+
 
 // * Get cart items
 const getCartItems = async (id: string) => {
-    const cartItems = await prisma.cart.findUnique({
+    const cartItems = await prisma.cart.findMany({
         where: {
             userId: id
         },
@@ -46,42 +78,39 @@ const getCartItems = async (id: string) => {
             id: true,
             userId: true,
             status: true,
-            cartItems: {
-                select: {
-                    id: true,
-                    cartId: true,
-                    mealId: true,
-                    price: true,
-                    quatity: true
-                }
-            }
+            cartItems: true
         }
     });
 
+    // console.log(cartItems)
+
     // find items from cart
-    const items = cartItems?.cartItems;
-    if (!items) {
+
+    if (!cartItems) {
         return {
             message: "Items add in cart"
         }
     }
 
     // find meal by meal id
-    const cartInfo = [];
-    for (const item of items) {
-        const meal = await prisma.meals.findUnique({
-            where: {
-                id: item.mealId
-            }
-        })
-        const cartData = {
-            ...item,
-            thumbnail: meal?.thumbnail,
-            name: meal?.name
-        }
-        cartInfo.push(cartData)
+    // const cartInfo = [];
+
+    for (const item of cartItems) {
+        console.log(item)
+        // const meal = await prisma.meals.findUnique({
+        //     where: {
+        //         id: item.cartItems
+        //     }
+        // })
+        // const cartData = {
+        //     ...item,
+        //     thumbnail: meal?.thumbnail,
+        //     name: meal?.name
+        // }
+        // cartInfo.push(cartData)
     }
-    return cartInfo;
+    // console.log(cartInfo)
+    // return cartInfo;
 }
 
 // Delete cart items 
