@@ -6,7 +6,7 @@ const createCart = async (data: any, userId: string) => {
         where: {
             userId,
             status: "ACTIVE",
-        },
+        }
     });
     //  If not exist create
     if (!cart) {
@@ -14,7 +14,7 @@ const createCart = async (data: any, userId: string) => {
             data: {
                 userId,
                 status: "ACTIVE",
-            },
+            }
         });
     }
     //  Get meal
@@ -64,8 +64,6 @@ const createCart = async (data: any, userId: string) => {
     };
 };
 
-
-
 // * Get cart items
 const getCartItems = async (userId: string) => {
     const cart = await prisma.cart.findFirst({
@@ -78,8 +76,14 @@ const getCartItems = async (userId: string) => {
                 include: {
                     meals: {
                         select: {
+                            providerId: true,
                             name: true,
                             thumbnail: true,
+                            category: {
+                                select: {
+                                    cuisine: true
+                                }
+                            }
                         },
                     },
                 },

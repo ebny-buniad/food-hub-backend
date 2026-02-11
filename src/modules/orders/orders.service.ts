@@ -1,8 +1,9 @@
 import { prisma } from "../../lib/prisma"
 
 const createOrder = async (data: any, userId: string) => {
-    const { providerId, deliveryAddress, items } = data;
-    
+    console.log(data)
+    const { cartId, providerId, deliveryAddress, items } = data;
+
     const order = await prisma.orders.create({
         data: {
             userId,
@@ -37,15 +38,27 @@ const createOrder = async (data: any, userId: string) => {
                 quantity: item.quantity,
                 price: meal.price
             }
-        })
+        });
     }
 
+
     // * Update total amount
-    const updateOrderAmount = await prisma.orders.update({
+    await prisma.orders.update({
         where: { id: order.id },
         data: { totalAmount }
     })
-    return updateOrderAmount;
+
+    // Update cart items status 
+    const updateCartStatus = await prisma.cart.update({
+        where: {
+            id: cartId,
+            status: "ACTIVE"
+        },
+        data: {
+            status: "ORDERED"
+        }
+    })
+    return updateCartStatus;
 }
 
 // * Get user orders

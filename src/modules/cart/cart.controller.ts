@@ -37,7 +37,10 @@ const getCartItems = async (req: Request, res: Response) => {
             }
         }
         const result = await cartService.getCartItems(id);
-        res.status(201).json(result);
+        res.status(200).json({
+            success: true,
+            data: result
+        });
     }
     catch (error) {
         res.status(400).json({
@@ -58,7 +61,10 @@ const deleteCartItems = async (req: Request, res: Response) => {
             }
         }
         const result = await cartService.deleteCartItems(id);
-        res.status(201).json(result);
+        res.status(200).json({
+            data: result,
+            success: true
+        });
     }
     catch (error) {
         res.status(400).json({
