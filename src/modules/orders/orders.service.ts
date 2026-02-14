@@ -1,3 +1,4 @@
+import { UserRole } from "../../enum";
 import { prisma } from "../../lib/prisma"
 
 const createOrder = async (data: any, userId: string) => {
@@ -41,7 +42,6 @@ const createOrder = async (data: any, userId: string) => {
         });
     }
 
-
     // * Update total amount
     await prisma.orders.update({
         where: { id: order.id },
@@ -65,7 +65,7 @@ const createOrder = async (data: any, userId: string) => {
 const getOrders = async (userId: string) => {
     const orders = await prisma.orders.findMany({
         where: {
-            userId
+            userId,
         },
         orderBy: {
             createdAt: "desc"
@@ -139,11 +139,38 @@ const getOrderById = async (id: string) => {
     return order;
 }
 
+// Update order ststus
 
+const updateOrderStatus = async (orderId: string, userId: string, role: string) => {
+
+    if (role === UserRole.USER) {
+        await prisma.orders.update({
+            where: {
+                userId: userId,
+                id: orderId
+            },
+            data: {
+                status: "CANCELLED"
+            }
+        })
+    }
+    else if (role === UserRole.PROVIDER) {
+        await prisma.orders.update({
+            where: {
+                id: orderId
+            },
+            data: {
+                status: "DELIVERED"
+            }
+        })
+    }
+    return;
+}
 
 
 export const ordersServices = {
     createOrder,
     getOrders,
-    getOrderById
+    getOrderById,
+    updateOrderStatus
 }
