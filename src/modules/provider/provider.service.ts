@@ -18,6 +18,30 @@ const getProviders = async () => {
         orderBy: {
             createdAt: "desc"
         },
+        // include: {
+        //     meals: {
+        //         select: {
+        //             dietary: true,
+        //             category: true,
+        //             name: true,
+        //             description: true,
+        //             price: true,
+        //             thumbnail: true,
+        //             isAvailable: true,
+        //             reviews: true
+        //         }
+        //     }
+        // }
+    })
+    return providers;
+}
+
+// Get signle provider with menu
+const getProvider = async (P_Id: string) => {
+    const provider = await prisma.providerProfiles.findUnique({
+        where: {
+            id: P_Id
+        },
         include: {
             meals: {
                 select: {
@@ -29,33 +53,6 @@ const getProviders = async () => {
                     thumbnail: true,
                     isAvailable: true,
                     reviews: true
-                }
-            }
-        }
-    })
-    return providers;
-}
-
-// Get signle provider with menu
-const getProvider = async (P_Id: string) => {
-    const provider = await prisma.providerProfiles.findUnique({
-        where: {
-            id: P_Id
-        },
-        select: {
-            id: true,
-            image: true,
-            restaurentName: true,
-            description: true,
-            address: true,
-            isOpen: true,
-            meals: {
-                select: {
-                    name: true,
-                    description: true,
-                    thumbnail: true,
-                    price: true,
-                    isAvailable: true,
                 }
             }
         }
