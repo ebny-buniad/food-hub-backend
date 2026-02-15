@@ -142,7 +142,6 @@ const getOrderById = async (id: string) => {
 // Update order ststus
 
 const updateOrderStatus = async (orderId: string, userId: string, role: string) => {
-
     if (role === UserRole.USER) {
         await prisma.orders.update({
             where: {
@@ -150,7 +149,7 @@ const updateOrderStatus = async (orderId: string, userId: string, role: string) 
                 id: orderId
             },
             data: {
-                status: "CANCELLED"
+                status: "CANCELED"
             }
         })
     }

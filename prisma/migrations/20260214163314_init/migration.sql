@@ -1,8 +1,11 @@
 -- CreateEnum
+CREATE TYPE "CartStatus" AS ENUM ('ACTIVE', 'ORDERED');
+
+-- CreateEnum
 CREATE TYPE "DietaryPreferences" AS ENUM ('VEGETARIAN', 'VEGAN', 'NON_VEGETARIAN', 'HALAL', 'GLUTEN_FREE', 'LOW_CALORIE');
 
 -- CreateEnum
-CREATE TYPE "OrderStatus" AS ENUM ('PLACED', 'PREPARING', 'DELIVERED', 'CANCELLED');
+CREATE TYPE "OrderStatus" AS ENUM ('PLACED', 'DELIVERED', 'CANCELED');
 
 -- CreateEnum
 CREATE TYPE "PaymentMethod" AS ENUM ('Cash');
@@ -11,6 +14,7 @@ CREATE TYPE "PaymentMethod" AS ENUM ('Cash');
 CREATE TABLE "ProviderProfiles" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "image" TEXT,
     "restaurentName" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "address" TEXT NOT NULL,
@@ -24,7 +28,7 @@ CREATE TABLE "ProviderProfiles" (
 -- CreateTable
 CREATE TABLE "Categories" (
     "id" TEXT NOT NULL,
-    "cuisine" TEXT[],
+    "cuisine" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -36,6 +40,7 @@ CREATE TABLE "Meals" (
     "id" TEXT NOT NULL,
     "providerId" TEXT,
     "categoryId" TEXT,
+    "dietary" "DietaryPreferences" DEFAULT 'HALAL',
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
@@ -48,13 +53,35 @@ CREATE TABLE "Meals" (
 );
 
 -- CreateTable
+CREATE TABLE "Cart" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "status" "CartStatus" NOT NULL DEFAULT 'ACTIVE',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CartItems" (
+    "id" TEXT NOT NULL,
+    "cartId" TEXT NOT NULL,
+    "mealId" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
+    "price" DECIMAL(10,2) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "CartItems_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Orders" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "restaurentId" TEXT NOT NULL,
-    "status" "OrderStatus" NOT NULL,
+    "providerId" TEXT NOT NULL,
+    "status" "OrderStatus" DEFAULT 'PLACED',
     "deliveryAddress" TEXT NOT NULL,
-    "paymentMethod" "PaymentMethod" NOT NULL,
+    "paymentMethod" "PaymentMethod" DEFAULT 'Cash',
     "totalAmount" DECIMAL(10,2) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -65,8 +92,9 @@ CREATE TABLE "Orders" (
 -- CreateTable
 CREATE TABLE "OrderItems" (
     "id" TEXT NOT NULL,
-    "order_ID" TEXT NOT NULL,
-    "meal_id" TEXT NOT NULL,
+    "orderID" TEXT NOT NULL,
+    "mealId" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
 
@@ -76,22 +104,14 @@ CREATE TABLE "OrderItems" (
 -- CreateTable
 CREATE TABLE "Reviews" (
     "id" TEXT NOT NULL,
-    "customer_id" TEXT NOT NULL,
-    "meal_id" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
+    "mealId" TEXT NOT NULL,
     "rating" SMALLINT NOT NULL,
     "comment" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Reviews_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "DietaryPreference" (
-    "id" TEXT NOT NULL,
-    "dietaryType" "DietaryPreferences" NOT NULL DEFAULT 'HALAL',
-
-    CONSTRAINT "DietaryPreference_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -155,6 +175,15 @@ CREATE TABLE "verification" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "ProviderProfiles_userId_key" ON "ProviderProfiles"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Categories_cuisine_key" ON "Categories"("cuisine");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CartItems_cartId_mealId_key" ON "CartItems"("cartId", "mealId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
@@ -179,22 +208,34 @@ ALTER TABLE "Meals" ADD CONSTRAINT "Meals_providerId_fkey" FOREIGN KEY ("provide
 ALTER TABLE "Meals" ADD CONSTRAINT "Meals_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Cart" ADD CONSTRAINT "Cart_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CartItems" ADD CONSTRAINT "CartItems_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CartItems" ADD CONSTRAINT "CartItems_mealId_fkey" FOREIGN KEY ("mealId") REFERENCES "Meals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Orders" ADD CONSTRAINT "Orders_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Orders" ADD CONSTRAINT "Orders_restaurentId_fkey" FOREIGN KEY ("restaurentId") REFERENCES "ProviderProfiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Orders" ADD CONSTRAINT "Orders_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "ProviderProfiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrderItems" ADD CONSTRAINT "OrderItems_order_ID_fkey" FOREIGN KEY ("order_ID") REFERENCES "Orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderItems" ADD CONSTRAINT "OrderItems_orderID_fkey" FOREIGN KEY ("orderID") REFERENCES "Orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrderItems" ADD CONSTRAINT "OrderItems_meal_id_fkey" FOREIGN KEY ("meal_id") REFERENCES "Meals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderItems" ADD CONSTRAINT "OrderItems_mealId_fkey" FOREIGN KEY ("mealId") REFERENCES "Meals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Reviews" ADD CONSTRAINT "Reviews_customer_id_fkey" FOREIGN KEY ("customer_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderItems" ADD CONSTRAINT "OrderItems_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Reviews" ADD CONSTRAINT "Reviews_meal_id_fkey" FOREIGN KEY ("meal_id") REFERENCES "Meals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Reviews" ADD CONSTRAINT "Reviews_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reviews" ADD CONSTRAINT "Reviews_mealId_fkey" FOREIGN KEY ("mealId") REFERENCES "Meals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

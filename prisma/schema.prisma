@@ -139,7 +139,7 @@ enum DietaryPreferences {
 enum OrderStatus {
   PLACED
   DELIVERED
-  CANCELLED
+  CANCELED
 }
 
 enum PaymentMethod {

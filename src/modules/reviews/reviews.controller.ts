@@ -11,8 +11,8 @@ const createReviews = async (req: Request, res: Response) => {
                 message: "User id invallied"
             }
         }
-
         const data = req.body;
+        console.log(data)
         const result = await reviewsServices.createReviews(data, id);
         res.status(201).json(result);
     }
