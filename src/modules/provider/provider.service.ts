@@ -17,6 +17,20 @@ const getProviders = async () => {
     const providers = await prisma.providerProfiles.findMany({
         orderBy: {
             createdAt: "desc"
+        },
+        include: {
+            meals: {
+                select: {
+                    dietary: true,
+                    category: true,
+                    name: true,
+                    description: true,
+                    price: true,
+                    thumbnail: true,
+                    isAvailable: true,
+                    reviews: true
+                }
+            }
         }
     })
     return providers;
