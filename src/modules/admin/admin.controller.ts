@@ -39,14 +39,17 @@ const updateUserRole = async (req: Request, res: Response) => {
 // Update user staus
 
 const updateUserStatus = async (req: Request, res: Response) => {
-    const userId = req.params.id;
-    const status = req.body;
-    const data = {
-        userId,
-        status
+    try {
+        const userId = req.params.id;
+        const result = await adminServices.updateUserStatus(userId as string);
+        res.status(200).json(result);
     }
-    const result = await adminServices.updateUserStatus(data);
-    res.status(200).json(result);
+    catch (error) {
+        res.status(400).json({
+            error: "Update user status failed",
+            details: error
+        })
+    }
 }
 
 export const adminController = {

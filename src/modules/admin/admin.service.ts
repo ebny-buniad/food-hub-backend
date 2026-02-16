@@ -22,17 +22,32 @@ const updateUserRole = async (data: any, id: string) => {
 
 // Update user status (Active/suspend)
 
-const updateUserStatus = async (data: any) => {
-    const userStatus = await prisma.user.update({
-        where: {
-            id: data?.userId
-        },
-        data: {
-            status: data?.status?.status
-        }
+const updateUserStatus = async (userId: string) => {
+
+    //  First get user
+    const existingUser = await prisma.user.findUnique({
+        where: { id: userId },
     });
-    return userStatus;
-}
+
+    if (!existingUser) {
+        throw new Error("User not found");
+    }
+
+    //  Toggle logic
+    const newStatus =
+        existingUser.status === "ACTIVE"
+            ? "SUSPENDED"
+            : "ACTIVE";
+
+    //  Update user
+    const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { status: newStatus },
+    });
+
+    return updatedUser;
+};
+
 
 
 export const adminServices = {
