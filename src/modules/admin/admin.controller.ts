@@ -16,16 +16,16 @@ const getUsers = async (req: Request, res: Response) => {
 
 // * Update user status
 
-const updateUserStatus = async (req: Request, res: Response) => {
+const updateUserRole = async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
-        if(!id || typeof id !== "string"){
+        if (!id || typeof id !== "string") {
             return {
                 message: "User id invallied"
             }
         }
         const data = req.body;
-        const result = await adminServices.updateUserStatus(data, id);
+        const result = await adminServices.updateUserRole(data, id);
         res.status(200).json(result);
     }
     catch (error) {
@@ -36,7 +36,21 @@ const updateUserStatus = async (req: Request, res: Response) => {
     }
 }
 
+// Update user staus
+
+const updateUserStatus = async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    const status = req.body;
+    const data = {
+        userId,
+        status
+    }
+    const result = await adminServices.updateUserStatus(data);
+    res.status(200).json(result);
+}
+
 export const adminController = {
     getUsers,
+    updateUserRole,
     updateUserStatus
 }

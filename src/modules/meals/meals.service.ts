@@ -11,7 +11,10 @@ const createMeal = async (data: Meal, id: string) => {
     });
     const providerId = providerProfile?.id;
     if (!providerId) {
-        throw new Error("Provider profile not found");
+        return {
+            message: "Provider profile not found",
+            status: 404
+        }
     }
     const result = await prisma.meals.create({
         data: {
