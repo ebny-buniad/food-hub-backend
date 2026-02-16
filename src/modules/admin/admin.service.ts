@@ -6,6 +6,17 @@ const getUsers = async () => {
     return users;
 }
 
+// Get all order
+
+const getAllOrders = async () => {
+    const orders = await prisma.orders.findMany({
+        include: {
+            orderItems: true
+        }
+    });
+    return orders;
+}
+
 // * Update user role
 const updateUserRole = async (data: any, id: string) => {
     const roleChange = await prisma.user.update({
@@ -53,5 +64,6 @@ const updateUserStatus = async (userId: string) => {
 export const adminServices = {
     getUsers,
     updateUserRole,
-    updateUserStatus
+    updateUserStatus,
+    getAllOrders
 }

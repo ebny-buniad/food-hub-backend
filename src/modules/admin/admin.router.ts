@@ -6,7 +6,8 @@ import { UserRole } from "../../enum";
 const router = express.Router();
 
 router.get("/admin/users", auth(UserRole.ADMIN), adminController.getUsers);
-// router.patch("/admin/users/:id", auth(UserRole.ADMIN), adminController.updateUserRole);
+router.get("/admin/orders", auth(UserRole.ADMIN), adminController.getAllOrders);
+router.patch("/admin/users/:id", auth(UserRole.ADMIN), adminController.updateUserRole);
 router.patch("/admin/users/status/:id", auth(UserRole.ADMIN), adminController.updateUserStatus);
 
 

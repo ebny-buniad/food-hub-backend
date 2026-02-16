@@ -14,6 +14,21 @@ const getUsers = async (req: Request, res: Response) => {
     }
 }
 
+// Get all orders
+
+const getAllOrders = async (req: Request, res: Response) => {
+    try {
+        const result = await adminServices.getAllOrders();
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Get users failed",
+            details: error
+        })
+    }
+}
+
 // * Update user status
 
 const updateUserRole = async (req: Request, res: Response) => {
@@ -54,6 +69,7 @@ const updateUserStatus = async (req: Request, res: Response) => {
 
 export const adminController = {
     getUsers,
+    getAllOrders,
     updateUserRole,
     updateUserStatus
 }
