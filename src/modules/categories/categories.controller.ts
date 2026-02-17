@@ -10,7 +10,8 @@ const createCategories = async (req: Request, res: Response) => {
     catch (error: any) {
         if (error.code === "P2002") {
             res.status(400).json({
-                error: "Category list already exists"
+                error: "Category list already exists",
+                status: 400
             })
         }
     }
@@ -31,14 +32,15 @@ const getCategories = async (req: Request, res: Response) => {
     }
 }
 
-const updateCategories = async (req: Request, res: Response) => {
+// * DELETE Categories
+
+const deleteCategories = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         if (!id || typeof id != "string") {
             throw new Error("Invalid category id");
         }
-        const data = req.body;
-        const result = await categoriesSevices.updateCategories(data, id);
+        const result = await categoriesSevices.deleteCategories(id);
         res.status(200).json(result)
     }
     catch (error) {
@@ -53,5 +55,5 @@ const updateCategories = async (req: Request, res: Response) => {
 export const categoriesController = {
     createCategories,
     getCategories,
-    updateCategories
+    deleteCategories
 }

@@ -17,20 +17,20 @@ const getCategories = async () => {
     return categories;
 }
 
-// * Update categories
-const updateCategories = async (data: Categories, id: string) => {
-    const result = await prisma.categories.update({
+// * Delete categories
+const deleteCategories = async (cateId: string) => {
+    const deleteCate = await prisma.categories.delete({
         where: {
-            id: id
-        },
-        data: {
-            ...data
+            id: cateId
         }
-    })
+    });
+
+    return deleteCate;
 }
+
 
 export const categoriesSevices = {
     createCategories,
     getCategories,
-    updateCategories
+    deleteCategories
 }
