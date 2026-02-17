@@ -28,9 +28,38 @@ const deleteCategories = async (cateId: string) => {
     return deleteCate;
 }
 
+// Admin stats
+
+const getAdminStats = async () => {
+    const [
+        totalUsers,
+        totalOrders,
+        totalCategories,
+        totalProviders,
+        revenue,
+    ] = await Promise.all([
+        prisma.user.count(),
+        prisma.orders.count(),
+        prisma.categories.count(),
+        prisma.providerProfiles.count(),
+        prisma.orders.aggregate({
+            _sum: { totalAmount: true },
+        })
+    ]);
+
+    return {
+        totalUsers,
+        totalOrders,
+        totalCategories,
+        totalProviders,
+        totalRevenue: revenue?._sum?.totalAmount ?? 0,
+    }
+}
+
 
 export const categoriesSevices = {
     createCategories,
     getCategories,
-    deleteCategories
+    deleteCategories,
+    getAdminStats
 }

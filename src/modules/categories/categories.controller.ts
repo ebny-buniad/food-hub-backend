@@ -51,9 +51,25 @@ const deleteCategories = async (req: Request, res: Response) => {
     }
 }
 
+// Admin stats 
+
+const getAdminStats = async (req: Request, res: Response) => {
+    try {
+        const result = await categoriesSevices.getAdminStats();
+        res.status(200).json(result)
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Admin stats getting failed",
+            details: error
+        })
+    }
+}
+
 
 export const categoriesController = {
     createCategories,
     getCategories,
-    deleteCategories
+    deleteCategories,
+    getAdminStats
 }

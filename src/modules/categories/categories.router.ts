@@ -9,4 +9,7 @@ router.post("/categories", auth(UserRole.ADMIN), categoriesController.createCate
 router.get("/categories", categoriesController.getCategories)
 router.delete("/categories/:id", auth(UserRole.ADMIN), categoriesController.deleteCategories);
 
+// Admin stats
+router.get('/admin-stats', auth(UserRole.ADMIN), categoriesController.getAdminStats);
+
 export const categoriesRouter: Router = router; 
