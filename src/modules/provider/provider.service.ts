@@ -12,39 +12,46 @@ const createProviderProfile = async (data: ProviderProfile, userId: string) => {
     return result;
 }
 
+// * Get Provider Profile
+const getProviderProfile = async(id: string) =>{
+    const profile = await prisma.providerProfiles.findUnique({
+        where: {
+            userId: id
+        }
+    });
+
+    const providerId = profile?.id;
+    if(!providerId){
+        return{
+            status: 404,
+            success:false,
+            message: "Provider not found, create profile"
+        }
+    }
+
+    return profile;
+}
+
 // * Get all providers
 const getProviders = async () => {
     const providers = await prisma.providerProfiles.findMany({
         orderBy: {
             createdAt: "desc"
-        },
-        // include: {
-        //     meals: {
-        //         select: {
-        //             dietary: true,
-        //             category: true,
-        //             name: true,
-        //             description: true,
-        //             price: true,
-        //             thumbnail: true,
-        //             isAvailable: true,
-        //             reviews: true
-        //         }
-        //     }
-        // }
+        }
     })
     return providers;
 }
 
 // Get signle provider with menu
-const getProvider = async (P_Id: string) => {
+const getProvider = async (id: string) => {
     const provider = await prisma.providerProfiles.findUnique({
         where: {
-            id: P_Id
+            userId: id
         },
         include: {
             meals: {
                 select: {
+                    id: true,
                     dietary: true,
                     category: true,
                     name: true,
@@ -125,7 +132,6 @@ const getProviderOrderById = async (id: string) => {
     return providerOrder;
 }
 
-
 // * Update order status
 
 const updateOrderStatus = async (data: any, id: string) => {
@@ -140,17 +146,6 @@ const updateOrderStatus = async (data: any, id: string) => {
     return orderStatus;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 // * Update Provider Profile
 const updateProfile = async (data: ProviderProfile, id: string) => {
     const updateData = await prisma.providerProfiles.update({
@@ -164,10 +159,9 @@ const updateProfile = async (data: ProviderProfile, id: string) => {
     return updateData;
 }
 
-
-
 export const providerSevices = {
     createProviderProfile,
+    getProviderProfile,
     updateProfile,
     getProvider,
     getProviders,

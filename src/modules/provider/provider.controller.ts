@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { providerSevices } from "./provider.service";
 
-// * Create Provider Profile 
+//  Create Provider Profile 
 const createProviderProfile = async (req: Request, res: Response) => {
     try {
         const userId = req.user?.id;
@@ -23,6 +23,22 @@ const createProviderProfile = async (req: Request, res: Response) => {
     }
 }
 
+// * Get Provider Profile
+const getProviderProfile = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user?.id;
+        const result = await providerSevices.getProviderProfile(userId as string);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Provider profile get failed",
+            details: error
+        })
+    }
+}
+
+
 // * Get all providers
 const getProviders = async (req: Request, res: Response) => {
     try {
@@ -40,13 +56,8 @@ const getProviders = async (req: Request, res: Response) => {
 // Get provider
 const getProvider = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        if (!id || typeof id !== "string") {
-            return {
-                message: "Id requred!"
-            }
-        }
-        const result = await providerSevices.getProvider(id)
+        const id = req.user?.id;
+        const result = await providerSevices.getProvider(id as string)
         res.status(200).json(result);
     }
     catch (error) {
@@ -126,16 +137,6 @@ const updateOrderStatus = async (req: Request, res: Response) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
 // * Update Provider Profile
 const updateProfile = async (req: Request, res: Response) => {
     try {
@@ -162,6 +163,7 @@ const updateProfile = async (req: Request, res: Response) => {
 
 export const providerController = {
     createProviderProfile,
+    getProviderProfile,
     updateProfile,
     getProviders,
     getProvider,

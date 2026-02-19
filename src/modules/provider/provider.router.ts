@@ -6,19 +6,20 @@ import { UserRole } from "../../enum";
 const router = express.Router();
 
 router.post("/provider/profile", auth(UserRole.PROVIDER), providerController.createProviderProfile);
-router.get("/providers", providerController.getProviders)
-router.get("/providers/:id", providerController.getProvider)
+router.get("/provider/profile", auth(UserRole.PROVIDER), providerController.getProviderProfile);
+router.get("/providers", providerController.getProviders);
+router.get("/provider/meals", auth(UserRole.PROVIDER), providerController.getProvider);
 
 // Provider orders
-router.get("/provider/orders", auth(UserRole.PROVIDER), providerController.getProviderOrders)
+router.get("/provider/orders", auth(UserRole.PROVIDER), providerController.getProviderOrders);
 // Get provider order by id
 router.get("/provider/orders/:id", auth(UserRole.PROVIDER), providerController.getProviderOrderById);
 
 // Update order status
-router.patch("/provider/orders/:id", auth(UserRole.PROVIDER), providerController.updateOrderStatus)
+router.patch("/provider/orders/:id", auth(UserRole.PROVIDER), providerController.updateOrderStatus);
 
 // Update provider profile
-router.patch("/provider/profile/:id", auth(UserRole.PROVIDER), providerController.updateProfile)
+router.patch("/provider/profile/:id", auth(UserRole.PROVIDER), providerController.updateProfile);
 
 
 export const providerRouter: Router = router;

@@ -21,7 +21,7 @@ model ProviderProfiles {
   restaurentName String
   description    String
   address        String
-  isOpen         Boolean
+  isOpen         Boolean @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   meals          Meals[]
@@ -51,7 +51,7 @@ model Meals {
   description String
   price       Decimal @db.Decimal(10, 2)
   thumbnail   String
-  isAvailable Boolean @default(true)
+  isAvailable Boolean @default(true)  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
