@@ -53,12 +53,12 @@ const auth = (...roles: UserRole[]) => {
                 });
             }
 
-            if (!session.user.emailVerified) {
-                return res.status(403).json({
-                    success: false,
-                    message: "Please verify your email first",
-                });
-            }
+            // if (!session.user.emailVerified) {
+            //     return res.status(403).json({
+            //         success: false,
+            //         message: "Please verify your email first",
+            //     });
+            // }
 
             // Inject user into request
             req.user = {
