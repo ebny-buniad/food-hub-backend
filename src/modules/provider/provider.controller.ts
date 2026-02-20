@@ -158,6 +158,20 @@ const updateProfile = async (req: Request, res: Response) => {
     }
 }
 
+const getProviderStats = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user?.id;
+        const result = await providerSevices.getProviderStats(userId as string);
+        res.status(200).json(result)
+    }
+    catch (error) {
+        res.status(400).json({
+            error: "Provider stats get failed",
+            details: error
+        })
+    }
+}
+
 
 
 
@@ -169,5 +183,6 @@ export const providerController = {
     getProvider,
     getProviderOrders,
     getProviderOrderById,
-    updateOrderStatus
+    updateOrderStatus,
+    getProviderStats
 }

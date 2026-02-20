@@ -13,7 +13,7 @@ const createProviderProfile = async (data: ProviderProfile, userId: string) => {
 }
 
 // * Get Provider Profile
-const getProviderProfile = async(id: string) =>{
+const getProviderProfile = async (id: string) => {
     const profile = await prisma.providerProfiles.findUnique({
         where: {
             userId: id
@@ -21,10 +21,10 @@ const getProviderProfile = async(id: string) =>{
     });
 
     const providerId = profile?.id;
-    if(!providerId){
-        return{
+    if (!providerId) {
+        return {
             status: 404,
-            success:false,
+            success: false,
             message: "Provider not found, create profile"
         }
     }
@@ -84,7 +84,10 @@ const getProviderOrders = async (id: string) => {
 
     const providerOrders = await prisma.orders.findMany({
         where: {
-            providerId: providerId
+            providerId: providerId,
+            status: {
+                in: ["PLACED", "DELIVERED"]
+            }
         },
         select: {
             id: true,
@@ -159,6 +162,48 @@ const updateProfile = async (data: ProviderProfile, id: string) => {
     return updateData;
 }
 
+
+// Get provider stats
+
+const getProviderStats = async (userId: string) => {
+    // First get provider from logged-in user
+    const provider = await prisma.providerProfiles.findUnique({
+        where: {
+            userId: userId
+        }
+    });
+
+    if (!provider) {
+        throw new Error("Provider not found");
+    }
+
+    const providerId = provider?.id;
+
+    const [totalMeals, totalOrders, revenue] = await Promise.all([
+        prisma.meals.count({
+            where: { providerId }
+        }),
+        prisma.orders.count({
+            where: { providerId }
+        }),
+        prisma.orders.aggregate({
+            where: {
+                providerId,
+                status: "DELIVERED"
+            },
+            _sum: {
+                totalAmount: true
+            }
+        })
+    ]);
+
+    return {
+        totalMeals,
+        totalOrders,
+        totalRevenue: revenue._sum.totalAmount || 0
+    };
+};
+
 export const providerSevices = {
     createProviderProfile,
     getProviderProfile,
@@ -167,5 +212,6 @@ export const providerSevices = {
     getProviders,
     getProviderOrders,
     getProviderOrderById,
-    updateOrderStatus
+    updateOrderStatus,
+    getProviderStats
 }

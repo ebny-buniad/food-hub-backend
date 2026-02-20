@@ -16,10 +16,13 @@ router.get("/provider/orders", auth(UserRole.PROVIDER), providerController.getPr
 router.get("/provider/orders/:id", auth(UserRole.PROVIDER), providerController.getProviderOrderById);
 
 // Update order status
-router.patch("/provider/orders/:id", auth(UserRole.PROVIDER), providerController.updateOrderStatus);
+router.patch("/provider/orders/status/:id", auth(UserRole.PROVIDER), providerController.updateOrderStatus);
 
 // Update provider profile
 router.patch("/provider/profile/:id", auth(UserRole.PROVIDER), providerController.updateProfile);
+
+router.get("/provider/stats", auth(UserRole.PROVIDER), providerController.getProviderStats);
+
 
 
 export const providerRouter: Router = router;
