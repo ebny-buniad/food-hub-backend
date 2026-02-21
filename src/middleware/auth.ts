@@ -21,7 +21,7 @@ const auth = (...roles: UserRole[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers.cookie
-            console.log('Cookie from frontnd ---', token)
+            // console.log('Cookie from frontnd ---', token)
 
             if (!token) {
                 return res.status(401).json({
@@ -29,22 +29,13 @@ const auth = (...roles: UserRole[]) => {
                     message: "Unauthorized - No cookie found",
                 });
             }
-            // const sessionToken = cookie
-            //     .split(";")
-            //     .find((c) => c.trim().startsWith("better-auth.session_token="))
-            //     ?.split("=")[1];
-
-
-            // console.log("session token : =",sessionToken)
-
-
 
             //  Pass full cookie header to betterAuth
             const session = await betterAuth.api.getSession({
                 headers: req.headers as any,
             });
 
-            console.log("session backend =============================", session)
+            // console.log("session backend =============================", session)
 
             if (!session || !session.user) {
                 return res.status(401).json({
@@ -62,12 +53,12 @@ const auth = (...roles: UserRole[]) => {
 
             // Inject user into request
             req.user = {
-                id: session.user.id,
-                email: session.user.email,
-                name: session.user.name,
-                role: session.user.role as string,
-                emailVerified: session.user.emailVerified,
-                image: session.user.image ?? null,
+                id: session?.user?.id,
+                email: session?.user?.email,
+                name: session?.user?.name,
+                role: session?.user?.role as string,
+                emailVerified: session?.user?.emailVerified,
+                image: session?.user?.image ?? null,
             };
 
             // Role check (optional)
