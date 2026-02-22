@@ -1637,8 +1637,10 @@ var cartRouter = router8;
 var app = express9();
 app.use(express9.json());
 app.use(cors({
-  origin: process.env.APP_URL,
-  // client side url
+  origin: [
+    `${process.env.APP_URL}`,
+    "https://food-hub-frontend-tawny.vercel.app"
+  ],
   credentials: true
 }));
 app.get("/", (req, res) => {

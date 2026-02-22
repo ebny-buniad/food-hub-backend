@@ -136,13 +136,15 @@ const updateMeal = async (data: any, id: string) => {
 }
 
 // * Delete meal
+
 const deleteMeal = async (id: string) => {
     const result = await prisma.meals.delete({
-        where: {
-            id: id
-        }
-    })
-}
+        where: { id : id}
+    });
+    return result;
+};
+
+
 
 export const mealsServices = {
     createMeal,
