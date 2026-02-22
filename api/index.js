@@ -340,10 +340,9 @@ var updateMeal = async (data, id) => {
 };
 var deleteMeal = async (id) => {
   const result = await prisma.meals.delete({
-    where: {
-      id
-    }
+    where: { id }
   });
+  return result;
 };
 var mealsServices = {
   createMeal,
@@ -1637,10 +1636,8 @@ var cartRouter = router8;
 var app = express9();
 app.use(express9.json());
 app.use(cors({
-  origin: [
-    `${process.env.APP_URL}`,
-    "https://food-hub-frontend-tawny.vercel.app"
-  ],
+  origin: process.env.APP_URL,
+  // client side url
   credentials: true
 }));
 app.get("/", (req, res) => {
