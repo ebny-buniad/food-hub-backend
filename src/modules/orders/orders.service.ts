@@ -2,64 +2,65 @@ import { UserRole } from "../../enum";
 import { prisma } from "../../lib/prisma"
 
 const createOrder = async (data: any, userId: string) => {
-    console.log(data)
     const { cartId, providerId, deliveryAddress, items } = data;
 
-    const order = await prisma.orders.create({
-        data: {
-            userId,
-            providerId,
-            deliveryAddress,
-            totalAmount: 0
+    const result = await prisma.$transaction(async (tx) => {
+        const order = await tx.orders.create({
+            data: {
+                userId,
+                providerId,
+                deliveryAddress,
+                totalAmount: 0,
+            },
+        });
+
+        let totalAmount = 0;
+
+        for (const item of items) {
+            const meal = await tx.meals.findUnique({
+                where: { id: item.mealId },
+            });
+
+            if (!meal) throw new Error("Meal not found");
+
+            const price = Number(meal.price) * item.quantity;
+            totalAmount += price;
+
+            await tx.orderItems.create({
+                data: {
+                    orderID: order.id,
+                    mealId: meal.id,
+                    categoryId: meal.categoryId!,
+                    quantity: item.quantity,
+                    price: meal.price,
+                },
+            });
+
+            await tx.meals.update({
+                where: { id: meal.id },
+                data: {
+                    totalOrders: {
+                        increment: item.quantity,
+                    },
+                },
+            });
         }
+
+        await tx.orders.update({
+            where: { id: order.id },
+            data: { totalAmount },
+        });
+
+        await tx.cart.update({
+            where: { id: cartId },
+            data: { status: "ORDERED" },
+        });
+
+        return order;
     });
 
-    let totalAmount = 0;
-
-    // * Create orderItems
-    for (const item of items) {
-        const meal = await prisma.meals.findUnique({
-            where: {
-                id: item.mealId
-            }
-        });
-
-        if (!meal) {
-            throw new Error("Meal not found");
-        };
-
-        const price = Number(meal.price) * item.quantity;
-        totalAmount = totalAmount + price;
-
-        await prisma.orderItems.create({
-            data: {
-                orderID: order.id,
-                mealId: meal.id,
-                categoryId: meal.categoryId!,
-                quantity: item.quantity,
-                price: meal.price
-            }
-        });
-    }
-
-    // * Update total amount
-    await prisma.orders.update({
-        where: { id: order.id },
-        data: { totalAmount }
-    })
-
-    // Update cart items status 
-    const updateCartStatus = await prisma.cart.update({
-        where: {
-            id: cartId,
-            status: "ACTIVE"
-        },
-        data: {
-            status: "ORDERED"
-        }
-    })
-    return updateCartStatus;
-}
+    return result;
+};
 
 // * Get user orders
 const getOrders = async (userId: string) => {

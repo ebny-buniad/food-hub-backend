@@ -21,7 +21,7 @@ model ProviderProfiles {
   restaurentName String
   description    String
   address        String
-  isOpen         Boolean @default(true)
+  isOpen         Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   meals          Meals[]
@@ -44,18 +44,33 @@ model Meals {
   provider   ProviderProfiles? @relation(fields: [providerId], references: [id])
 
   categoryId String?
-  category   Categories?         @relation(fields: [categoryId], references: [id])
-  dietary    DietaryPreferences? @default(HALAL)
+  category   Categories? @relation(fields: [categoryId], references: [id])
 
+  dietary DietaryPreferences @default(HALAL)
+
+  // Basic Info
   name        String
   description String
   price       Decimal @db.Decimal(10, 2)
   thumbnail   String
-  isAvailable Boolean @default(true)  
+  isAvailable Boolean @default(true)
+
+  tags           String[] @default([])
+  searchKeywords String[] @default([])
+  searchText     String?
+
+  totalOrders Int @default(0)
+
+  ratingSum   Int   @default(0)
+  ratingCount Int   @default(0)
+  ratingAvg   Float @default(0)
+
+  isFeatured Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
   orderItems OrderItems[]
   reviews    Reviews[]
   cartItems  CartItems[]
@@ -63,7 +78,7 @@ model Meals {
 
 model Cart {
   id        String      @id @default(uuid())
-  userId    String      
+  userId    String
   user      User        @relation(fields: [userId], references: [id])
   status    CartStatus  @default(ACTIVE)
   createdAt DateTime    @default(now())
@@ -72,11 +87,11 @@ model Cart {
 
 model CartItems {
   id        String   @id @default(uuid())
-  cartId    String 
+  cartId    String
   cart      Cart     @relation(fields: [cartId], references: [id])
   mealId    String
   meals     Meals    @relation(fields: [mealId], references: [id])
-  quantity   Int      @default(1)
+  quantity  Int      @default(1)
   price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
 
