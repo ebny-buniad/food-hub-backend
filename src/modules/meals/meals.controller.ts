@@ -24,23 +24,25 @@ const createMeal = async (req: Request, res: Response) => {
 
 // * Get all meals
 const getAllMeals = async (req: Request, res: Response) => {
-    try {
-        const { dietary, cuisine, minPrice, maxPrice } = req.query;
-        const result = await mealsServices.getAllMeals({
-            dietary,
-            cuisine,
-            minPrice,
-            maxPrice
-        });
-        res.status(200).json(result);
-    }
-    catch (error) {
-        res.status(400).json({
-            error: "Meals get failed",
-            details: error
-        })
-    }
-}
+  try {
+    const { dietary, cuisine, minPrice, maxPrice, q } = req.query;
+
+    const result = await mealsServices.getAllMeals({
+      dietary,
+      cuisine,
+      minPrice,
+      maxPrice,
+      q,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({
+      error: "Meals get failed",
+      details: error,
+    });
+  }
+};
 
 // * Get meal by Id
 const getMeal = async (req: Request, res: Response) => {

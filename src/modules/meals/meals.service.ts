@@ -27,62 +27,94 @@ const createMeal = async (data: Meal, id: string) => {
 
 // * Get all Meals 
 const getAllMeals = async (filters: any) => {
-    const where: any = {}
-    // dietary filter
+    const where: any = {
+        AND: [],
+    };
+
+    // 🔍 SEARCH (AI)
+    if (filters.q) {
+        where.AND.push({
+            OR: [
+                {
+                    name: {
+                        contains: filters.q,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    tags: {
+                        hasSome: [filters.q],
+                    },
+                },
+                {
+                    searchKeywords: {
+                        hasSome: [filters.q],
+                    },
+                },
+                {
+                    searchText: {
+                        contains: filters.q,
+                        mode: "insensitive",
+                    },
+                },
+            ],
+        });
+    }
+
+    // 🥗 dietary filter
     if (filters.dietary) {
-        where.dietary = filters.dietary;
+        where.AND.push({
+            dietary: filters.dietary,
+        });
     }
 
-    // price range filter
+    // 💰 price filter
     if (filters.minPrice || filters.maxPrice) {
-        where.price = {};
-        if (filters.minPrice) where.price.gte = Number(filters.minPrice);
-        if (filters.maxPrice) where.price.lte = Number(filters.maxPrice);
+        const priceFilter: any = {};
+
+        if (filters.minPrice)
+            priceFilter.gte = Number(filters.minPrice);
+
+        if (filters.maxPrice)
+            priceFilter.lte = Number(filters.maxPrice);
+
+        where.AND.push({
+            price: priceFilter,
+        });
     }
 
-    // cuisine filter (relation)
+    // 🍛 cuisine filter
     if (filters.cuisine) {
-        where.category = {
-            cuisine: filters.cuisine
-        };
+        where.AND.push({
+            category: {
+                cuisine: filters.cuisine,
+            },
+        });
     }
 
     const result = await prisma.meals.findMany({
-        where,
-        orderBy: {
-            createdAt: "desc"
-        },
+        where: where.AND.length ? where : {},
+        orderBy: [
+            { isFeatured: "desc" },   
+            { totalOrders: "desc" },  
+            { createdAt: "desc" }, 
+        ],
         select: {
             id: true,
-            providerId: true,
-            dietary: true,
-            category: {
-                select: {
-                    cuisine: true
-                }
-            },
             name: true,
-            description: true,
             price: true,
             thumbnail: true,
-            isAvailable: true,
-            reviews: {
+            ratingAvg: true,
+            category: {
                 select: {
-                    rating: true,
-                    customer: {
-                        select: {
-                            name: true
-                        }
-                    },
-                    comment: true,
-                    createdAt: true
-                }
+                    cuisine: true,
+                },
             },
-            createdAt: true
-        }
+        },
     });
+
     return result;
-}
+};
 
 // * Get single meal by Id
 const getMeal = async (id: string) => {
@@ -139,7 +171,7 @@ const updateMeal = async (data: any, id: string) => {
 
 const deleteMeal = async (id: string) => {
     const result = await prisma.meals.delete({
-        where: { id : id}
+        where: { id: id }
     });
     return result;
 };
