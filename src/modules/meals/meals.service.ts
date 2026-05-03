@@ -31,7 +31,7 @@ const getAllMeals = async (filters: any) => {
         AND: [],
     };
 
-    // 🔍 SEARCH (AI)
+    //  SEARCH (AI)
     if (filters.q) {
         where.AND.push({
             OR: [
@@ -61,14 +61,14 @@ const getAllMeals = async (filters: any) => {
         });
     }
 
-    // 🥗 dietary filter
+    // dietary filter
     if (filters.dietary) {
         where.AND.push({
             dietary: filters.dietary,
         });
     }
 
-    // 💰 price filter
+    // price filter
     if (filters.minPrice || filters.maxPrice) {
         const priceFilter: any = {};
 
@@ -83,7 +83,7 @@ const getAllMeals = async (filters: any) => {
         });
     }
 
-    // 🍛 cuisine filter
+    // cuisine filter
     if (filters.cuisine) {
         where.AND.push({
             category: {
@@ -95,9 +95,9 @@ const getAllMeals = async (filters: any) => {
     const result = await prisma.meals.findMany({
         where: where.AND.length ? where : {},
         orderBy: [
-            { isFeatured: "desc" },   
-            { totalOrders: "desc" },  
-            { createdAt: "desc" }, 
+            { isFeatured: "desc" },
+            { totalOrders: "desc" },
+            { createdAt: "desc" },
         ],
         select: {
             id: true,
@@ -110,6 +110,7 @@ const getAllMeals = async (filters: any) => {
                     cuisine: true,
                 },
             },
+            isAvailable: true
         },
     });
 
@@ -154,6 +155,68 @@ const getMeal = async (id: string) => {
     return result;
 }
 
+// TRENDING Food
+
+const getTrendingMeals = async () => {
+    return await prisma.meals.findMany({
+        orderBy: {
+            totalOrders: "desc",
+        },
+        take: 6,
+        select: {
+            id: true,
+            name: true,
+            thumbnail: true,
+            price: true,
+            ratingAvg: true,
+        },
+    });
+};
+
+// RECOMMENDATION FOOD
+
+const getRecommendedMeals = async (mealId: string) => {
+    const meal = await prisma.meals.findUnique({
+        where: { id: mealId },
+    });
+
+    if (!meal) throw new Error("Meal not found");
+
+    const result = await prisma.meals.findMany({
+        where: {
+            AND: [
+                {
+                    id: { not: mealId }, // exclude current meal
+                },
+                {
+                    OR: [
+                        { categoryId: meal.categoryId }, // same category
+                        {
+                            tags: {
+                                hasSome: meal.tags, // similar tags
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        take: 6,
+        orderBy: [
+            { ratingAvg: "desc" },
+            { totalOrders: "desc" },
+        ],
+        select: {
+            id: true,
+            name: true,
+            thumbnail: true,
+            price: true,
+            ratingAvg: true,
+        },
+    });
+
+    return result;
+};
+
 // * Update Meals
 const updateMeal = async (data: any, id: string) => {
     const result = await prisma.meals.update({
@@ -181,6 +244,8 @@ const deleteMeal = async (id: string) => {
 export const mealsServices = {
     createMeal,
     getAllMeals,
+    getTrendingMeals,
+    getRecommendedMeals,
     updateMeal,
     getMeal,
     deleteMeal

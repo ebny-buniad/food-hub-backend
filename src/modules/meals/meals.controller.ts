@@ -24,24 +24,24 @@ const createMeal = async (req: Request, res: Response) => {
 
 // * Get all meals
 const getAllMeals = async (req: Request, res: Response) => {
-  try {
-    const { dietary, cuisine, minPrice, maxPrice, q } = req.query;
+    try {
+        const { dietary, cuisine, minPrice, maxPrice, q } = req.query;
 
-    const result = await mealsServices.getAllMeals({
-      dietary,
-      cuisine,
-      minPrice,
-      maxPrice,
-      q,
-    });
+        const result = await mealsServices.getAllMeals({
+            dietary,
+            cuisine,
+            minPrice,
+            maxPrice,
+            q,
+        });
 
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({
-      error: "Meals get failed",
-      details: error,
-    });
-  }
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json({
+            error: "Meals get failed",
+            details: error,
+        });
+    }
 };
 
 // * Get meal by Id
@@ -61,6 +61,37 @@ const getMeal = async (req: Request, res: Response) => {
         })
     }
 }
+
+// TRENDING Food
+
+const getTrendingMeals = async (req: Request, res: Response) => {
+    try {
+        const result = await mealsServices.getTrendingMeals();
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json({
+            error: "Trending meals failed",
+            details: error,
+        });
+    }
+};
+
+// RECOMMENDATION FOOD
+const getRecommendedMeals = async (req: Request, res: Response) => {
+  try {
+    const { mealId } = req.params;
+
+    const result = await mealsServices.getRecommendedMeals(mealId as string);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({
+      error: "Recommendation failed",
+      details: error,
+    });
+  }
+};
 
 // * Update meals
 const updateMeal = async (req: Request, res: Response) => {
@@ -104,6 +135,8 @@ export const mealsController = {
     createMeal,
     getAllMeals,
     getMeal,
+    getTrendingMeals,
+    getRecommendedMeals,
     updateMeal,
     deleteMeal
 }

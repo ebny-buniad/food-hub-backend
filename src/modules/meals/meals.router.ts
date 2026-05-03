@@ -8,6 +8,8 @@ const router = express.Router();
 router.post("/provider/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
 router.get("/meals", mealsController.getAllMeals);
 router.get("/meals/:id", mealsController.getMeal);
+router.get("/meals-trending", mealsController.getTrendingMeals);
+router.get("/meals-recommendation", mealsController.getRecommendedMeals);
 router.put("/provider/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal);
 router.delete("/provider/meals/:id", auth(UserRole.PROVIDER), mealsController.deleteMeal);
 
